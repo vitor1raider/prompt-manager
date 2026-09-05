@@ -1,3 +1,4 @@
+import { Sidebar } from '@/components/sidebar/sidebar';
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -19,7 +20,16 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       lang="pt-br"
       className={`${inter.variable} h-full antialiased bg-gray-900 text-white`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <section className="flex h-screen">
+          <Sidebar />
+          <main className="relative flex-1 overflow-auto min-w-0">
+            <div className="p-4 sm:p-6 md:p-8 max-w-full md:max-w-3xl mx-auto h-full">
+              {children}
+            </div>
+          </main>
+        </section>
+      </body>
     </html>
   );
 }
