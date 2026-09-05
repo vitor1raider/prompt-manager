@@ -6,19 +6,40 @@ import {
   ArrowRightToLine,
   X as CloseButton,
 } from 'lucide-react';
-import { useState } from 'react';
+import { startTransition, useState } from 'react';
 import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
 import { Logo } from '../logo/logo';
+import { Input } from '../ui/input';
 
-export function SidebarContent() {
+type Prompt = {
+  id: string;
+  title: string;
+  content: string;
+};
+
+export type SidebarContentProps = {
+  prompts: Prompt[];
+};
+
+export function SidebarContent({ prompts }: SidebarContentProps) {
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [query, setQuery] = useState('');
 
   const collapsedSidebar = () => setIsCollapsed(true);
   const expandSidebar = () => setIsCollapsed(false);
 
   const handleNewPrompt = () => router.push('/new');
+
+  const handleQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value;
+    setQuery(query);
+    startTransition(() => {
+      const url = query ? `/?q=${encodeURIComponent(query)}` : '/';
+      router.push(url, { scroll: false });
+    });
+  };
 
   return (
     <aside
@@ -68,6 +89,19 @@ export function SidebarContent() {
               </header>
             </div>
 
+            <section className="mb-5">
+              <form action="">
+                <Input
+                  name="q"
+                  type="text"
+                  value={query}
+                  placeholder="Pesquisar prompts"
+                  onChange={handleQueryChange}
+                  autoFocus
+                />
+              </form>
+            </section>
+
             <div className="">
               <Button className="w-full" size="lg" onClick={handleNewPrompt}>
                 <AddIcon className="w-5 h-5 mr-2" />
@@ -77,6 +111,10 @@ export function SidebarContent() {
           </section>
         </>
       )}
+
+      {prompts.map((prompt) => (
+        <p key={prompt.id}>{prompt.title}</p>
+      ))}
     </aside>
   );
 }
