@@ -1,8 +1,17 @@
 import { Prompt } from '@/core/domain/prompts/prompt.entity';
 import { PrismaClient } from '../../../../generated/prisma/client';
 import { PrismaPromptRepository } from '@/infrastructure/repository/prisma-prompt.repository';
+import { CreatePromptDTO } from '@/core/application/prompts/create-prompt.dto';
 
 type PromptDelegateMock = {
+  create: jest.MockedFunction<
+    (args: { data: CreatePromptDTO }) => Promise<void>
+  >;
+  findFirst: jest.MockedFunction<
+    (args: {
+      where: { title: string };
+    }) => Promise<Pick<Prompt, 'id' | 'title' | 'content'> | null>
+  >;
   findMany: jest.MockedFunction<
     (args: {
       orderBy?: { createdAt: 'asc' | 'desc' };
@@ -23,7 +32,9 @@ type PrismaMock = {
 function createMockPrisma() {
   const mock: PrismaMock = {
     prompt: {
+      create: jest.fn(),
       findMany: jest.fn(),
+      findFirst: jest.fn(),
     },
   };
   return mock as unknown as PrismaClient & PrismaMock;
@@ -36,6 +47,40 @@ describe('PrismaPromptRepository', () => {
   beforeEach(() => {
     prisma = createMockPrisma();
     repository = new PrismaPromptRepository(prisma);
+  });
+
+  describe('create', () => {
+    it('should return a create method that creates a new prompt', async () => {
+      const input = {
+        title: 'Prompt 1',
+        content: 'Content 1',
+      };
+
+      await repository.create(input);
+
+      expect(prisma.prompt.create).toHaveBeenCalledWith({
+        data: input,
+      });
+    });
+  });
+
+  describe.only('findByTitle', () => {
+    it('should return findFirst with the title', async () => {
+      const title = 'Prompt 1';
+      const input = {
+        id: '1',
+        title,
+        content: 'Content 1',
+      };
+      prisma.prompt.findFirst.mockResolvedValue(input);
+
+      const result = await repository.findByTitle(title);
+
+      expect(prisma.prompt.findFirst).toHaveBeenCalledWith({
+        where: { title },
+      });
+      expect(result).toEqual(input);
+    });
   });
 
   describe('findMany', () => {
