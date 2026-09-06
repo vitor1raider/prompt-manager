@@ -11,7 +11,7 @@ import { Textarea } from '../ui/textarea';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FieldGroup } from '../ui/field';
+import { Field, FieldError, FieldGroup } from '../ui/field';
 import { useRouter } from 'next/navigation';
 import { createPromptAction } from '@/app/actions/prompt.actions';
 import { toast } from 'sonner';
@@ -50,36 +50,41 @@ export function PromptForm() {
         </Button>
       </header>
 
-      <FieldGroup>
-        <Controller
-          name="title"
-          control={form.control}
-          render={({ field }) => (
+      <Controller
+        name="title"
+        control={form.control}
+        render={({ field, fieldState }) => (
+          <Field>
             <Input
               placeholder="Título do prompt"
               variant="transparent"
               size="lg"
               autoFocus
+              aria-invalid={fieldState.invalid}
               {...field}
             />
-          )}
-        />
-      </FieldGroup>
 
-      <FieldGroup>
-        <Controller
-          name="content"
-          control={form.control}
-          render={({ field }) => (
+            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
+
+      <Controller
+        name="content"
+        control={form.control}
+        render={({ field, fieldState }) => (
+          <Field>
             <Textarea
               placeholder="Digite o conteúdo do prompt..."
               variant="transparent"
               size="lg"
+              aria-invalid={fieldState.invalid}
               {...field}
             />
-          )}
-        />
-      </FieldGroup>
+            {fieldState.error && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
     </form>
   );
 }

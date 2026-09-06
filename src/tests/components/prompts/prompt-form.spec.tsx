@@ -79,4 +79,15 @@ describe('PromptForm', () => {
     expect(toast.error).toHaveBeenCalledWith(errorMessage);
     expect(refreshMock).not.toHaveBeenCalled();
   });
+
+  it('should display validation errors when fields are empty', async () => {
+    makeSut();
+
+    const submitButton = screen.getByRole('button', { name: 'Salvar' });
+    await user.click(submitButton);
+
+    expect(screen.getByText('O título é obrigatório')).toBeVisible();
+    expect(screen.getByText('O conteúdo é obrigatório')).toBeVisible();
+    expect(createActionMock).not.toHaveBeenCalled();
+  });
 });

@@ -28,7 +28,7 @@ describe('SearchPromptUseCase', () => {
           prompt.title.toLowerCase().includes(term.toLocaleLowerCase()) ||
           prompt.content.toLowerCase().includes(term.toLocaleLowerCase())
       ),
-  };
+  } as PromptRepository;
 
   it('should return all prompts when the search term is empty', async () => {
     const useCase = new SearchPromptsUseCase(repository);

@@ -2,7 +2,7 @@ import {
   SidebarContent,
   SidebarContentProps,
 } from '@/components/sidebar/sidebar-content';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 const pushMock = jest.fn();
@@ -225,13 +225,15 @@ describe('SidebarContent', () => {
     });
   });
 
-  it('should initialize the search input with the query parameter from the URL', () => {
+  it('should initialize the search input with the query parameter from the URL', async () => {
     const text = 'inicial';
     const searchParams = new URLSearchParams(`q=${text}`);
     mockSearchParams = searchParams;
     makeSut();
     const searchInput = screen.getByPlaceholderText('Pesquisar prompts');
 
-    expect(searchInput).toHaveValue(text);
+    await waitFor(() => {
+      expect(searchInput).toHaveValue(text);
+    });
   });
 });

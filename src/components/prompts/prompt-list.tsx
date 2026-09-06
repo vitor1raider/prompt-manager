@@ -1,11 +1,11 @@
 import { PromptSummary } from '@/core/domain/prompts/prompt.entity';
 import { PromptCard } from './prompt-card';
 
-type PromptListProips = {
+export type PromptListProps = {
   prompts: PromptSummary[];
 };
 
-export function PromptList({ prompts }: PromptListProips) {
+export function PromptList({ prompts }: PromptListProps) {
   return (
     <ul className="space-y-2">
       {prompts.map((prompt) => (
