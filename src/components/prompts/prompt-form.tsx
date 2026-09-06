@@ -11,7 +11,7 @@ import { Textarea } from '../ui/textarea';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Field, FieldError, FieldGroup } from '../ui/field';
+import { Field, FieldError } from '../ui/field';
 import { useRouter } from 'next/navigation';
 import { createPromptAction } from '@/app/actions/prompt.actions';
 import { toast } from 'sonner';
