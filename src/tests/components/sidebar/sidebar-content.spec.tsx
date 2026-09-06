@@ -6,12 +6,12 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 const pushMock = jest.fn();
-let moackSearchParams = new URLSearchParams();
+let mockSearchParams = new URLSearchParams();
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: pushMock,
   }),
-  useSearchParams: () => moackSearchParams,
+  useSearchParams: () => mockSearchParams,
 }));
 
 const makeSut = (
@@ -85,6 +85,29 @@ describe('SidebarContent', () => {
         name: /minimizar menu/i,
       });
       expect(collapseButton).toBeInTheDocument();
+    });
+
+    it('should expand again when clicking the expand button', async () => {
+      makeSut();
+
+      const collapseButton = screen.getByRole('button', {
+        name: /minimizar menu/i,
+      });
+
+      await user.click(collapseButton);
+
+      const expandButton = screen.getByRole('button', {
+        name: /expandir menu/i,
+      });
+
+      await user.click(expandButton);
+
+      expect(
+        screen.getByRole('button', { name: /minimizar menu/i })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('navigation', { name: /lista de prompts/i })
+      ).toBeVisible();
     });
 
     it('should render the expand button when the sidebar is collapsed', async () => {
@@ -169,12 +192,43 @@ describe('SidebarContent', () => {
       const lastClearCall = pushMock.mock.calls.at(-1);
       expect(lastClearCall?.[0]).toBe(`/`);
     });
+
+    it('should submit the form when entering a search term', async () => {
+      const submitSpy = jest
+        .spyOn(HTMLFormElement.prototype, 'requestSubmit')
+        .mockImplementation(() => undefined);
+      const text = 'Prompt 1';
+      makeSut();
+
+      const searchInput = screen.getByPlaceholderText(
+        /pesquisar prompts/i
+      ) as HTMLInputElement;
+
+      await user.type(searchInput, text);
+
+      expect(submitSpy).toHaveBeenCalled();
+      submitSpy.mockRestore();
+    });
+
+    it('should automatically submit the form on mount when a query is present', async () => {
+      const submitSpy = jest
+        .spyOn(HTMLFormElement.prototype, 'requestSubmit')
+        .mockImplementation(() => undefined);
+
+      const text = 'Prompt 1';
+      const searchParams = new URLSearchParams(`q=${text}`);
+      mockSearchParams = searchParams;
+      makeSut();
+
+      expect(submitSpy).toHaveBeenCalled();
+      submitSpy.mockRestore();
+    });
   });
 
   it('should initialize the search input with the query parameter from the URL', () => {
     const text = 'inicial';
     const searchParams = new URLSearchParams(`q=${text}`);
-    moackSearchParams = searchParams;
+    mockSearchParams = searchParams;
     makeSut();
     const searchInput = screen.getByPlaceholderText('Pesquisar prompts');
 

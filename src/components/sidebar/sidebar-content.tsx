@@ -6,7 +6,13 @@ import {
   ArrowRightToLine,
   X as CloseButton,
 } from 'lucide-react';
-import { startTransition, useActionState, useRef, useState } from 'react';
+import {
+  startTransition,
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Button } from '../ui/button';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Logo } from '../logo/logo';
@@ -55,6 +61,11 @@ export function SidebarContent({ prompts }: SidebarContentProps) {
       formRef.current?.requestSubmit();
     });
   };
+
+  useEffect(() => {
+    if (!hasQuery) return;
+    formRef.current?.requestSubmit();
+  }, [hasQuery]);
 
   return (
     <aside
