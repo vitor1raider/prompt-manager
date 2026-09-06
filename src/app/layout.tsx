@@ -18,17 +18,15 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html
       lang="pt-br"
-      className={`${inter.variable} h-full antialiased bg-gray-900 text-white`}
+      className={`${inter.variable} antialiased bg-gray-900 text-white flex h-screen`}
     >
       <body className="min-h-full flex flex-col">
-        <section className="flex h-screen">
-          <Sidebar />
-          <main className="relative flex-1 overflow-auto min-w-0">
-            <div className="p-4 sm:p-6 md:p-8 max-w-full md:max-w-3xl mx-auto h-full">
-              {children}
-            </div>
-          </main>
-        </section>
+        <Sidebar />
+        <main className="relative flex-1 overflow-auto min-w-0">
+          <div className="p-4 sm:p-6 md:p-8 max-w-full md:max-w-3xl mx-auto h-full">
+            {children}
+          </div>
+        </main>
       </body>
     </html>
   );
