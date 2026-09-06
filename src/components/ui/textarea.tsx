@@ -3,8 +3,8 @@ import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { cva, VariantProps } from 'class-variance-authority';
 
-const inputVariants = cva(
-  'h-11 w-full bg-gray-700 border border-gray-600 rounded-md p-3 text-white placeholder-gray-400 focus:outline-none',
+const textareaVariants = cva(
+  'w-full bg-gray-700 border border-gray-600 rounded-md p-3 text-white placeholder-gray-400 focus:outline-none min-h-[300px] resize-none',
   {
     variants: {
       variant: {
@@ -15,7 +15,7 @@ const inputVariants = cva(
       size: {
         default: 'h-9',
         sm: 'h-8',
-        lg: 'h-14 text-2xl font-bold sm:h-16 sm:text-3xl',
+        lg: 'h-16 text-base font-regular',
       },
       readOnly: {
         true: 'focus:ring-0 focus:border-gray-600 cursor-default',
@@ -30,26 +30,21 @@ const inputVariants = cva(
   }
 );
 
-type InputProps = Omit<React.ComponentProps<'input'>, 'size'> &
-  VariantProps<typeof inputVariants>;
+export type TextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> &
+  VariantProps<typeof textareaVariants>;
 
-function Input({
-  variant,
-  size,
-  className,
-  type,
-  readOnly,
-  ...props
-}: InputProps) {
-  return (
-    <input
-      type={type}
-      data-slot="input"
-      className={cn(inputVariants({ variant, size, readOnly, className }))}
-      readOnly={readOnly}
-      {...props}
-    />
-  );
-}
+const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
+  ({ className, variant, size, readOnly, ...props }, ref) => {
+    return (
+      <textarea
+        className={cn(textareaVariants({ variant, size, readOnly, className }))}
+        ref={ref}
+        readOnly={readOnly}
+        {...props}
+      />
+    );
+  }
+);
+Textarea.displayName = 'Textarea';
 
-export { Input };
+export { Textarea };

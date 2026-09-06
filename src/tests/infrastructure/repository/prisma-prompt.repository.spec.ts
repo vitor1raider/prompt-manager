@@ -1,6 +1,6 @@
-import { PrismaPromptRepository } from '@/app/infrastructure/repository/prisma-prompt.repository';
 import { Prompt } from '@/core/domain/prompts/prompt.entity';
 import { PrismaClient } from '../../../../generated/prisma/client';
+import { PrismaPromptRepository } from '@/infrastructure/repository/prisma-prompt.repository';
 
 type PromptDelegateMock = {
   findMany: jest.MockedFunction<
