@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { cva, VariantProps } from 'class-variance-authority';
 
 const textareaVariants = cva(
-  'w-full bg-gray-700 border border-gray-600 rounded-md p-3 text-white placeholder-gray-400 focus:outline-none min-h-[300px] resize-none',
+  'w-full bg-gray-700 border border-gray-200/40 rounded-md p-3 text-white placeholder-gray-400 focus:outline-none min-h-[300px] resize-none',
   {
     variants: {
       variant: {
@@ -19,7 +19,7 @@ const textareaVariants = cva(
       },
       readOnly: {
         true: 'focus:ring-0 focus:border-gray-600 cursor-default',
-        false: 'focus:ring-2 focus:ring-accent-400 focus:border-transparent',
+        false: 'focus:ring-2 focus:ring-gray-200 focus:border-transparent',
       },
     },
     defaultVariants: {
