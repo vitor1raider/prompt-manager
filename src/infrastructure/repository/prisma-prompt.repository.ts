@@ -15,12 +15,32 @@ export class PrismaPromptRepository implements PromptRepository {
     });
   }
 
+  async update(id: string, data: Partial<CreatePromptDTO>): Promise<Prompt> {
+    const updatedPrompt = await this.prisma.prompt.update({
+      where: { id },
+      data: {
+        ...(data.title !== undefined ? { title: data.title } : {}),
+        ...(data.content !== undefined ? { content: data.content } : {}),
+      },
+    });
+
+    return updatedPrompt;
+  }
+
   async findMany(): Promise<Prompt[]> {
     const prompts = await this.prisma.prompt.findMany({
       orderBy: { createdAt: 'desc' },
     });
 
     return prompts;
+  }
+
+  async findById(id: string): Promise<Prompt | null> {
+    const prompt = await this.prisma.prompt.findUnique({
+      where: { id },
+    });
+
+    return prompt;
   }
 
   async findByTitle(title: string): Promise<Prompt | null> {
