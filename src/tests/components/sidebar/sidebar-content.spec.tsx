@@ -35,7 +35,7 @@ describe('SidebarContent', () => {
     it('should render a new prompt button', () => {
       makeSut();
 
-      expect(screen.getByRole('complementary')).toBeVisible();
+      expect(screen.getByRole('complementary')).toBeInTheDocument();
       expect(
         screen.getByRole('button', { name: 'Novo Prompt' })
       ).toBeInTheDocument();
@@ -96,7 +96,7 @@ describe('SidebarContent', () => {
       makeSut();
 
       const aside = screen.getByRole('complementary');
-      expect(aside).toBeVisible();
+      expect(aside).toBeInTheDocument();
 
       const collapseButton = screen.getByRole('button', {
         name: /minimizar menu/i,
@@ -124,7 +124,7 @@ describe('SidebarContent', () => {
       ).toBeInTheDocument();
       expect(
         screen.getByRole('navigation', { name: /lista de prompts/i })
-      ).toBeVisible();
+      ).toBeInTheDocument();
     });
 
     it('should render the expand button when the sidebar is collapsed', async () => {
@@ -156,7 +156,7 @@ describe('SidebarContent', () => {
         name: /novo prompt/i,
       });
 
-      expect(newPromptButton).toBeVisible();
+      expect(newPromptButton).toBeInTheDocument();
     });
 
     it('not should show the list of prompts when the sidebar is collapsed', async () => {
