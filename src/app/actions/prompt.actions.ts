@@ -16,6 +16,7 @@ import {
 } from '@/core/application/prompts/update-prompt.dto';
 import { UpdatePromptUseCase } from '@/core/application/prompts/update-prompt.use-case';
 import { DeletePromptUseCase } from '@/core/application/prompts/delete-prompt.use-case';
+import { revalidatePath } from 'next/cache';
 
 type SearchFormState = {
   success: boolean;
@@ -48,6 +49,7 @@ export async function createPromptAction(
     const repository = new PrismaPromptRepository(prisma);
     const useCase = new CreatePromptUseCase(repository);
     await useCase.execute(validated.data);
+    revalidatePath('/', 'layout');
   } catch (error) {
     const _error = error as Error;
     if (_error.message === 'PROMPT_ALREADY_EXISTS') {
@@ -87,7 +89,7 @@ export async function updatePromptAction(
     const repository = new PrismaPromptRepository(prisma);
     const useCase = new UpdatePromptUseCase(repository);
     await useCase.execute(validated.data);
-
+    revalidatePath('/', 'layout');
     return {
       success: true,
       message: 'Prompt atualizado com sucesso',
@@ -115,7 +117,7 @@ export async function deletePromptAction(id: string): Promise<FormState> {
     const repository = new PrismaPromptRepository(prisma);
     const useCase = new DeletePromptUseCase(repository);
     await useCase.execute(id);
-
+    revalidatePath('/', 'layout');
     return {
       success: true,
       message: 'Prompt removido com sucesso',

@@ -4,9 +4,13 @@ import {
   searchPromptAction,
   updatePromptAction,
 } from '@/app/actions/prompt.actions';
-import { DeletePromptUseCase } from '@/core/application/prompts/delete-prompt.use-case';
+import { revalidatePath } from 'next/cache';
 
 jest.mock('@/lib/prisma', () => ({ prisma: {} }));
+
+jest.mock('next/cache', () => ({
+  revalidatePath: jest.fn(),
+}));
 
 const mockedSearchExecute = jest.fn();
 const mockedCreateExecute = jest.fn();
@@ -30,6 +34,7 @@ jest.mock('@/core/application/prompts/update-prompt.use-case', () => ({
     execute: mockedUpdateExecute,
   })),
 }));
+
 jest.mock('@/core/application/prompts/delete-prompt.use-case', () => ({
   DeletePromptUseCase: jest.fn().mockImplementation(() => ({
     execute: mockedDeleteExecute,
@@ -42,6 +47,7 @@ describe('Server Actions: Prompts', () => {
     mockedCreateExecute.mockReset();
     mockedUpdateExecute.mockReset();
     mockedDeleteExecute.mockReset();
+    (revalidatePath as jest.Mock).mockReset();
   });
 
   describe('createPromptAction', () => {
@@ -54,6 +60,7 @@ describe('Server Actions: Prompts', () => {
 
       expect(result?.success).toBe(true);
       expect(result?.message).toBe('Prompt criado com sucesso');
+      expect(revalidatePath).toHaveBeenCalledTimes(1);
     });
 
     it('should return error when the prompt data is invalid', async () => {
@@ -159,6 +166,7 @@ describe('Server Actions: Prompts', () => {
         success: true,
         message: 'Prompt removido com sucesso',
       });
+      expect(revalidatePath).toHaveBeenCalledTimes(1);
     });
 
     it('should return error when the id is empty', async () => {
