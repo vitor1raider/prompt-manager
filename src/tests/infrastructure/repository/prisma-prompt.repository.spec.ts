@@ -2,15 +2,22 @@ import { Prompt } from '@/core/domain/prompts/prompt.entity';
 import { PrismaClient } from '../../../../generated/prisma/client';
 import { PrismaPromptRepository } from '@/infrastructure/repository/prisma-prompt.repository';
 import { CreatePromptDTO } from '@/core/application/prompts/create-prompt.dto';
+import { UpdatePromptDTO } from '@/core/application/prompts/update-prompt.dto';
 
 type PromptDelegateMock = {
   create: jest.MockedFunction<
     (args: { data: CreatePromptDTO }) => Promise<void>
   >;
+  update: jest.MockedFunction<
+    (args: { where: { id: string }; data: UpdatePromptDTO }) => Promise<Prompt>
+  >;
   findFirst: jest.MockedFunction<
     (args: {
       where: { title: string };
     }) => Promise<Pick<Prompt, 'id' | 'title' | 'content'> | null>
+  >;
+  findUnique: jest.MockedFunction<
+    (args: { where: { id: string } }) => Promise<Prompt | null>
   >;
   findMany: jest.MockedFunction<
     (args: {
@@ -33,8 +40,10 @@ function createMockPrisma() {
   const mock: PrismaMock = {
     prompt: {
       create: jest.fn(),
+      update: jest.fn(),
       findMany: jest.fn(),
       findFirst: jest.fn(),
+      findUnique: jest.fn(),
     },
   };
   return mock as unknown as PrismaClient & PrismaMock;
@@ -64,7 +73,70 @@ describe('PrismaPromptRepository', () => {
     });
   });
 
-  describe.only('findByTitle', () => {
+  describe('update', () => {
+    it('should return an update method that updates an existing prompt', async () => {
+      const now = new Date();
+      const input = {
+        id: '1',
+        title: 'Prompt 1',
+        content: 'Content 1',
+        createdAt: now,
+        updatedAt: now,
+      };
+      prisma.prompt.update.mockResolvedValue(input);
+
+      const result = await repository.update(input.id, {
+        title: input.title,
+        content: input.content,
+      });
+
+      expect(prisma.prompt.update).toHaveBeenCalledWith({
+        where: { id: input.id },
+        data: { title: input.title, content: input.content },
+      });
+      expect(result).toEqual(input);
+    });
+
+    it('should not include a content field in the update data if it is not provided', async () => {
+      const now = new Date();
+      const input = {
+        id: '1',
+        title: 'Prompt 1',
+        content: '',
+        createdAt: now,
+        updatedAt: now,
+      };
+      prisma.prompt.update.mockResolvedValue(input);
+
+      await repository.update(input.id, { title: input.title });
+      const call = prisma.prompt.update.mock.calls[0][0];
+
+      expect(call.where).toEqual({ id: input.id });
+      expect(call.data).toEqual({ title: input.title });
+      expect('content' in call.data).toBe(false);
+    });
+
+    it('should not include a title field in the update data if it is not provided', async () => {
+      const now = new Date();
+      const input = {
+        id: '1',
+        title: '',
+        content: 'Content 1',
+        createdAt: now,
+        updatedAt: now,
+      };
+      prisma.prompt.update.mockResolvedValue(input);
+
+      await repository.update(input.id, { content: input.content });
+      const call = prisma.prompt.update.mock.calls[0][0];
+
+      expect(call.where).toEqual({ id: input.id });
+      expect(call.data).toEqual({ content: input.content });
+      expect('title' in call.data).toBe(false);
+    });
+  });
+
+  describe('findByTitle', () => {
     it('should return findFirst with the title', async () => {
       const title = 'Prompt 1';
       const input = {
@@ -80,6 +152,35 @@ describe('PrismaPromptRepository', () => {
         where: { title },
       });
       expect(result).toEqual(input);
+    });
+  });
+
+  describe('findById', () => {
+    it('should return a prompt if it exists', async () => {
+      const now = new Date();
+      const input = {
+        id: '1',
+        title: 'Prompt 1',
+        content: 'Content 1',
+        createdAt: now,
+        updatedAt: now,
+      };
+      prisma.prompt.findUnique.mockResolvedValue(input);
+
+      const result = await repository.findById(input.id);
+
+      expect(prisma.prompt.findUnique).toHaveBeenCalledWith({
+        where: { id: input.id },
+      });
+      expect(result).toEqual(input);
+    });
+
+    it('should return null if the prompt does not exist', async () => {
+      prisma.prompt.findUnique.mockResolvedValue(null);
+
+      const result = await repository.findById('1');
+
+      expect(result).toBeNull();
     });
   });
 

@@ -21,7 +21,7 @@ import { toast } from 'sonner';
 import { CopyButton } from '../button-actions/copy-button';
 import { Prompt } from '@/core/domain/prompts/prompt.entity';
 
-type PromptFormProps = {
+export type PromptFormProps = {
   prompt?: Prompt | null;
 };
 
