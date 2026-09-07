@@ -47,7 +47,7 @@ export function PromptCard({ prompt }: PromptCardProps) {
 
   return (
     <motion.li
-      className="p-3 rounded-lg transtion-all duration-200 group relative hover:bg-gray-700"
+      className="p-2 rounded-lg transtion-all duration-200 group relative hover:bg-gray-700"
       aria-label={`${prompt.title}`}
       initial={{ opacity: 1, height: 'auto' }}
       exit={{
@@ -58,7 +58,7 @@ export function PromptCard({ prompt }: PromptCardProps) {
       }}
       animate={{ opacity: 1, y: 0 }}
     >
-      <header className="flex items-center justify-between">
+      <header className="flex items-center justify-between gap-3">
         <Link href={`/${prompt.id}`} prefetch className="flex-1 min-w-0">
           <h3 className="font-medium text-sm text-white group-hover:text-accent-300 transition-colors">
             {prompt.title}

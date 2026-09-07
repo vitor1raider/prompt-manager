@@ -93,14 +93,47 @@ describe('SidebarContent', () => {
 
       const aside = screen.getByRole('complementary');
       expect(aside.className).toContain('-translate-x-full');
+      expect(aside.className).toContain('w-0');
 
       const openButton = screen.getByRole('button', { name: 'Abrir menu' });
       await user.click(openButton);
       expect(aside.className).toContain('translate-x-0');
+      expect(aside.className).toContain('w-[80vw]');
 
       const closeButton = screen.getByRole('button', { name: 'Fechar menu' });
       await user.click(closeButton);
       expect(aside.className).toContain('-translate-x-full');
+      expect(aside.className).toContain('w-0');
+    });
+
+    it('should minimize and expand the open mobile menu', async () => {
+      makeSut();
+
+      const aside = screen.getByRole('complementary');
+      await user.click(screen.getByRole('button', { name: 'Abrir menu' }));
+      expect(aside.className).toContain('w-[80vw]');
+
+      await user.click(screen.getByRole('button', { name: /minimizar menu/i }));
+      expect(aside.className).toContain('w-18');
+
+      await user.click(screen.getByRole('button', { name: /expandir menu/i }));
+      expect(aside.className).toContain('w-[80vw]');
+    });
+
+    it('should close the collapsed mobile menu when creating a prompt', async () => {
+      makeSut();
+
+      const aside = screen.getByRole('complementary');
+      await user.click(screen.getByRole('button', { name: 'Abrir menu' }));
+      await user.click(screen.getByRole('button', { name: /minimizar menu/i }));
+      await user.click(screen.getByRole('button', { name: 'Novo Prompt' }));
+
+      expect(aside.className).toContain('w-0');
+      expect(aside.className).toContain('-translate-x-full');
+      expect(
+        screen.getByRole('button', { name: 'Abrir menu' })
+      ).toHaveAttribute('aria-expanded', 'false');
+      expect(pushMock).toHaveBeenCalledWith('/new');
     });
   });
 

@@ -58,6 +58,10 @@ export function SidebarContent({ prompts }: SidebarContentProps) {
   const closeMobile = () => setIsMobileOpen(false);
 
   const handleNewPrompt = () => router.push('/new');
+  const handleCollapsedNewPrompt = () => {
+    closeMobile();
+    handleNewPrompt();
+  };
 
   const handleQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
@@ -86,7 +90,7 @@ export function SidebarContent({ prompts }: SidebarContentProps) {
         <Menu className="w-5 h-5 text-gray-100" />
       </Button>
       <motion.aside
-        className={`border-r border-gray-700 flex flex-col h-full bg-gray-800 transition-[transform,width] duration-300 ease-in-out fixed md:relative left-0 top-0 z-50 md:z-auto w-[80vw] sm:w-[320px] ${isCollapsed ? 'md:w-18' : 'md:w-[384px]'} ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
+        className={`border-gray-700 flex flex-col h-full overflow-hidden bg-gray-800 transition-[transform,width] duration-300 ease-in-out fixed md:relative left-0 top-0 z-50 md:z-auto ${isMobileOpen ? `${isCollapsed ? 'w-18' : 'w-[80vw] sm:w-[320px]'} border-r translate-x-0` : 'w-0 border-r-0 -translate-x-full'} ${isCollapsed ? 'md:w-18' : 'md:w-[384px]'} md:border-r md:translate-x-0`}
         initial={false}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
       >
@@ -111,7 +115,7 @@ export function SidebarContent({ prompts }: SidebarContentProps) {
               transition={fadeTransition}
             >
               <Button
-                onClick={handleNewPrompt}
+                onClick={handleCollapsedNewPrompt}
                 aria-label="Novo Prompt"
                 title="Novo Prompt"
               >
@@ -194,7 +198,7 @@ export function SidebarContent({ prompts }: SidebarContentProps) {
               </motion.div>
             </section>
             <motion.nav
-              className="flex-1 overflow-auto px-6 pb-6"
+              className="flex-1 overflow-auto pl-6 pr-2 pb-6"
               aria-label="Lista de prompts"
               initial={false}
               animate={{ opacity: 1 }}
