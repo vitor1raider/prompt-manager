@@ -14,9 +14,10 @@ import {
   useRef,
   useState,
 } from 'react';
+import { useQueryState } from 'nuqs';
 import { motion } from 'framer-motion';
 import { Button } from '../ui/button';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Logo } from '../logo/logo';
 import { Input } from '../ui/input';
 import { PromptSummary } from '@/core/domain/prompts/prompt.entity';
@@ -30,7 +31,6 @@ export type SidebarContentProps = {
 
 export function SidebarContent({ prompts }: SidebarContentProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const formRef = useRef<HTMLFormElement | null>(null);
 
@@ -44,7 +44,7 @@ export function SidebarContent({ prompts }: SidebarContentProps) {
 
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [query, setQuery] = useState(searchParams.get('q') || '');
+  const [query, setQuery] = useQueryState('q', { defaultValue: '' });
 
   const hasQuery = query.trim().length > 0;
   const promptList = hasQuery ? (searchState.prompts ?? prompts) : prompts;
@@ -64,8 +64,6 @@ export function SidebarContent({ prompts }: SidebarContentProps) {
     setQuery(query);
 
     startTransition(() => {
-      const url = query ? `/?q=${encodeURIComponent(query)}` : '/';
-      router.push(url, { scroll: false });
       formRef.current?.requestSubmit();
     });
   };
