@@ -142,7 +142,7 @@ describe('SidebarContent', () => {
       expect(newPromptButton).toBeVisible();
     });
 
-    it.only('not should show the list of prompts when the sidebar is collapsed', async () => {
+    it('not should show the list of prompts when the sidebar is collapsed', async () => {
       makeSut();
 
       const collapseButton = screen.getByRole('button', {
