@@ -53,16 +53,18 @@ export function PromptCard({ prompt }: PromptCardProps) {
           </p>
         </Link>
         <AlertDialog>
-          <AlertDialogTrigger>
-            <Button
-              variant="icon"
-              size="icon"
-              title="Remover Prompt"
-              aria-label="Remover Prompt"
-            >
-              <DeleteIcon className="h-3 w-3" />
-            </Button>
-          </AlertDialogTrigger>
+          <AlertDialogTrigger
+            render={
+              <Button
+                variant="icon"
+                size="icon"
+                title="Remover Prompt"
+                aria-label="Remover Prompt"
+              >
+                <DeleteIcon className="h-3 w-3" />
+              </Button>
+            }
+          ></AlertDialogTrigger>
 
           <AlertDialogContent>
             <AlertDialogHeader>
